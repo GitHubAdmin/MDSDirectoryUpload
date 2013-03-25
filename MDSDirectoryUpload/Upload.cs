@@ -7,8 +7,24 @@ using System.Text;
 
 namespace MDSDirectoryUpload
 {
+	/// <summary>
+	/// The Upload class is responsible for managing the process of submitting
+	/// a file to a web service as a multi-part form item.
+	/// </summary>
 	public static class Upload
 	{
+		/// <summary>
+		/// Posts the file to the specified URI.
+		/// </summary>
+		/// <param name="requestUri">The URI to which the file upload should be submitted.</param>
+		/// <param name="postData">The extra form parameters for the request</param>
+		/// <param name="fileData">A stream with the contents of the file to be uploaded.</param>
+		/// <param name="fileName">The original name of the file to be uploaded.</param>
+		/// <param name="fileContentType">The content type of the contents of the file.</param>
+		/// <param name="fileFieldName">The form-field name to use for the file upload.</param>
+		/// <param name="cookies">A container of cookies to use with the request.</param>
+		/// <param name="headers">Any request headers that should be provided with the request.</param>
+		/// <returns>Reference to the response of the HTTP call.</returns>
 		public static WebResponse PostFile(Uri requestUri, 
 		                                   NameValueCollection postData, 
 		                                   Stream fileData, 
@@ -93,6 +109,17 @@ namespace MDSDirectoryUpload
 			}
 		}
 
+		/// <summary>
+		/// Helper method to post a file given the file name.
+		/// </summary>
+		/// <param name="requestUri">The URI of the Web Service</param>
+		/// <param name="postData">The form parameters for the request.</param>
+		/// <param name="fileName">The path to the file to be uploaded.</param>
+		/// <param name="fileContentType">The content type of the file being uploaded.</param>
+		/// <param name="fileFieldName">The form parameter name of the uploaded file.</param>
+		/// <param name="cookies">The cookies to be sent to the server.</param>
+		/// <param name="headers">The request headers required by the request.</param>
+		/// <returns></returns>
 		public static WebResponse PostFile(Uri requestUri, 
 		                                   NameValueCollection postData, 
 		                                   string fileName,

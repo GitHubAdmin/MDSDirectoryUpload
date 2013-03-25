@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Text;
@@ -30,7 +31,12 @@ namespace MDSDirectoryUpload
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//
-			ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };		
+			ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+			
+			// Default the values in the UI from the configuration file.
+			tbAccountId.Text = ConfigurationManager.AppSettings["AccountId"];
+			tbAccountPassword.Text = ConfigurationManager.AppSettings["AccountPassword"];
+			tbMDSFolder.Text = ConfigurationManager.AppSettings["MDSFolder"];
 		}
 		
 		
@@ -68,12 +74,10 @@ namespace MDSDirectoryUpload
 				sb.Append("Must specify an MDS folder");
 			}
 			if (sb.Length == 0) {
+				Cursor.Current = Cursors.WaitCursor;
 				LinkedList<MDSResponse> responses = FolderUpload.ProcessMDSFolder(mdsFolder, accountId, accountPassword);
-				lbUploadedItems.BeginUpdate();
-				foreach (MDSResponse response in responses) {
-					lbUploadedItems.Items.Add(response.ToString());
-				}
-				lbUploadedItems.EndUpdate();
+				PopulateListBox(responses);
+				Cursor.Current = Cursors.Default;
 			} else {
 				MessageBox.Show(sb.ToString(), "MDS Upload");
 			}
@@ -82,6 +86,19 @@ namespace MDSDirectoryUpload
 		void BtnCancelClick(object sender, EventArgs e)
 		{
 			Application.Exit();
+		}
+		
+		/// <summary>
+		/// Populate the list box with the information about the upload attempts.
+		/// </summary>
+		/// <param name="responses">The list of responses to the upload attempts.</param>
+		private void PopulateListBox(LinkedList<MDSResponse> responses) {
+				lbUploadedItems.BeginUpdate();
+				foreach (MDSResponse response in responses) {
+					lbUploadedItems.Items.Add(response.ToString());
+				}
+				lbUploadedItems.EndUpdate();
+
 		}
 	}
 }

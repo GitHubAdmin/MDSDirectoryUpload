@@ -25,13 +25,18 @@ The application will provide information on the status of each file upload. With
           |               |
           |              ...
           |
-          +-- Errors
+          +-- Errored
                   |
                   +-- 20120101
                           |
                           +-- <MDS files that had errors during upload>
 </pre>
 
+The application supports a configuration file that allows you to default some of the inputs. In the development environment, the configuration file is called 'app.config'. With the executable, it is located with the exe file and is called MDSDirectoryUpload.exe.config.
+
 If you prefer to modify the application to your own purposes, feel free to fork this Git repository and make the application your own.
+
+For those of you that don't have a .NET development environment, I recommend using SharpDevelop. It works well and it's free.
+
 
  

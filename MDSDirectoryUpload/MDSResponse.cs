@@ -13,7 +13,8 @@ using System.Xml;
 namespace MDSDirectoryUpload
 {
 	/// <summary>
-	/// Description of MDSResponse.
+	/// The MDSResponse class encapsulates the information returned
+	/// by the abaqis MDS web service.
 	/// </summary>
 	public class MDSResponse
 	{
@@ -22,16 +23,43 @@ namespace MDSDirectoryUpload
 		private string _submissionDateTime;
 		private string _message;
 		
+		/// <summary>
+		/// Constructs a new MDSResponse object for the specified
+		/// file path.
+		/// </summary>
+		/// <param name="path">The path to the file for which this response was created.</param>
 		public MDSResponse(string path) {
 			MDSFilePath = path;
 		}
 		
+		/// <summary>
+		/// Constructs a new MDSResponse object for the specified
+		/// file path and the XML response from the web service. The
+		/// basic information is parsed from the XML and made available
+		/// via the properties of this object.
+		/// </summary>
+		/// <param name="path">The path to the file for which this response was created.</param>
+		/// <param name="rawXMLResponse">The XML response from the abaqis web service.</param>
 		public MDSResponse(string path, string rawXMLResponse)
 		{
 			MDSFilePath = path;
 			InitFromXML(rawXMLResponse);
 		}
 		
+		/// <summary>
+		/// Returns true if the upload of this file was in error.
+		/// </summary>
+		public bool UploadError {
+			get {
+				return "ERROR" == _status;
+			}
+		}
+		
+		/// <summary>
+		/// Parses the XML for the information with which to populate
+		/// the properties of this object.
+		/// </summary>
+		/// <param name="rawXMLResponse"></param>
 		private void InitFromXML(string rawXMLResponse) {
 			using (XmlReader reader = XmlReader.Create(new StringReader(rawXMLResponse))) {
 				// Parse the file and display each of the nodes.
@@ -56,6 +84,10 @@ namespace MDSDirectoryUpload
 			}
 		}
 		
+		/// <summary>
+		/// Provides a nice string to display the status of a file upload.
+		/// </summary>
+		/// <returns>A string formatted: "status - path"</returns>
 		override public string ToString() {
 			return string.Format("{0} - {1}", Status, MDSFilePath);
 		}
