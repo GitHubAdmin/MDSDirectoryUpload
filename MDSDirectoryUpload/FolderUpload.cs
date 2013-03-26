@@ -33,11 +33,12 @@ namespace MDSDirectoryUpload
 		/// Processes all the MDS .zip files in the specified folder and submits
 		/// them to the abaqis MDS web service with the specified credentials.
 		/// </summary>
+		/// <param name="appliationPath">The path to the executable that started the program.</param>
 		/// <param name="mdsFolderPath">The path where the MDS files exist.</param>
 		/// <param name="accountId">The account ID provided by Providigm for your account.</param>
 		/// <param name="accountPassword">The account password provided by Providigm for your account.</param>
 		/// <returns>A list of MDS Responses, one for each MDS .zip file in the directory.</returns>
-		public static LinkedList<MDSResponse> ProcessMDSFolder(string mdsFolderPath, string accountId, string accountPassword) {
+		public static LinkedList<MDSResponse> ProcessMDSFolder(string applicationPath, string mdsFolderPath, string accountId, string accountPassword) {
 			string kNotifyEmail = ConfigurationManager.AppSettings["WebServiceNotificationEmail"];
 			string kMDSPostURL = ConfigurationManager.AppSettings["WebServiceURI"];
 			LinkedList<MDSResponse> uploadResults = new LinkedList<MDSResponse>();
@@ -53,6 +54,7 @@ namespace MDSDirectoryUpload
 			NameValueCollection parameters = new NameValueCollection();
 			parameters[kNotifyEmailParamName] = kNotifyEmail;
 			
+			Logger log = new Logger(applicationPath);
 			FileManager fm = new FileManager(mdsFolderPath);
 			        
 			foreach (string file in files) {
@@ -62,6 +64,7 @@ namespace MDSDirectoryUpload
 					r.Message = string.Format("File name too long to process ({0}), skipping", file);
 					uploadResults.AddLast(r);
 					MessageBox.Show(r.Message, "Processing MDS Files");
+					log.LogEntry(r.ToLogEntry());
 					continue;
 				}
 				WebResponse response = Upload.PostFile(new Uri(kMDSPostURL), parameters, file, kMDSContentType, kMDSFileParameterName, null, headers);
@@ -70,6 +73,7 @@ namespace MDSDirectoryUpload
 				
 				MDSResponse mrsp = new MDSResponse(file, results);
 				uploadResults.AddLast(mrsp);
+				log.LogEntry(mrsp.ToLogEntry());
 				
 				// Finally, archive the file
 				if (mrsp.UploadError) {
@@ -78,6 +82,8 @@ namespace MDSDirectoryUpload
 					fm.ArchiveProcessedFile(file);
 				}
 			}
+			
+			log.Close();
 			
 			return uploadResults;
 		}

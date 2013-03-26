@@ -74,8 +74,9 @@ namespace MDSDirectoryUpload
 				sb.Append("Must specify an MDS folder");
 			}
 			if (sb.Length == 0) {
+				string applicationPath = Application.StartupPath;
 				Cursor.Current = Cursors.WaitCursor;
-				LinkedList<MDSResponse> responses = FolderUpload.ProcessMDSFolder(mdsFolder, accountId, accountPassword);
+				LinkedList<MDSResponse> responses = FolderUpload.ProcessMDSFolder(applicationPath, mdsFolder, accountId, accountPassword);
 				PopulateListBox(responses);
 				Cursor.Current = Cursors.Default;
 			} else {

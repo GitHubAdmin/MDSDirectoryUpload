@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="FileManager.cs" />
     <Compile Include="FolderUpload.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>

@@ -8,6 +8,7 @@
  */
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 namespace MDSDirectoryUpload
@@ -22,6 +23,7 @@ namespace MDSDirectoryUpload
 		private string _status;
 		private string _submissionDateTime;
 		private string _message;
+		private string _rawResponse;
 		
 		/// <summary>
 		/// Constructs a new MDSResponse object for the specified
@@ -61,6 +63,7 @@ namespace MDSDirectoryUpload
 		/// </summary>
 		/// <param name="rawXMLResponse"></param>
 		private void InitFromXML(string rawXMLResponse) {
+			_rawResponse = rawXMLResponse;
 			using (XmlReader reader = XmlReader.Create(new StringReader(rawXMLResponse))) {
 				// Parse the file and display each of the nodes.
 				string currentElement = null;
@@ -92,6 +95,22 @@ namespace MDSDirectoryUpload
 			return string.Format("{0} - {1}", Status, MDSFilePath);
 		}
 		
+		public string ToLogEntry() {
+			if (RawResponse != null) {
+				return RawResponse;
+			} else {
+				StringBuilder sb = new StringBuilder(Status);
+				if (Message != null) {
+					sb.Append(" '");
+					sb.Append(Message);
+					sb.Append("'");
+				}
+				sb.Append(" ");
+				sb.Append(MDSFilePath);
+				return sb.ToString();
+			}
+		}
+		
 		public string MDSFilePath {
 			get { return _mdsFilePath; }
 			set { _mdsFilePath = value; }
@@ -110,6 +129,10 @@ namespace MDSDirectoryUpload
 		public string Message {
 			get { return _message; }
 			set { _message = value; }
+		}
+		
+		public string RawResponse {
+			get { return _rawResponse; }
 		}
 	}
 }
